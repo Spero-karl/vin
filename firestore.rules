@@ -1,0 +1,139 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // GESTION BOISSONS - RÈGLES DE SÉCURITÉ CLOUD FIRESTORE
+    // Architecture : Zero-Trust & ABAC (Attribute-Based Access Control)
+    // Conforme : Forfait Gratuit Firebase Spark
+    // ===============================================================
+
+    // 1. Fermeture globale par défaut (Default Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Fonctions d'aide ABAC
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == "karlfreaton@gmail.com"
+      );
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128;
+    }
+
+    // Validation du schéma d'un produit (boisson)
+    function isValidProduct(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 150 &&
+             data.category is string && data.category.size() > 0 && data.category.size() <= 50 &&
+             data.formatVolume is string && data.formatVolume.size() <= 50 &&
+             data.baseUnit is string && data.baseUnit.size() <= 50 &&
+             data.unitsPerCase is number && data.unitsPerCase >= 1 &&
+             data.stockBottles is number && data.stockBottles >= 0 &&
+             data.retailPrice is number && data.retailPrice >= 0 &&
+             data.casePrice is number && data.casePrice >= 0 &&
+             data.costPrice is number && data.costPrice >= 0 &&
+             data.minStockAlert is number && data.minStockAlert >= 0 &&
+             data.status in ['actif', 'inactif'] &&
+             (!('brand' in data) || data.brand is string) &&
+             (!('barcode' in data) || data.barcode is string) &&
+             (!('description' in data) || data.description is string);
+    }
+
+    // 2. Collection des utilisateurs (users)
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && (isOwner(userId) || isAdmin());
+      allow update: if isSignedIn() && (
+        isAdmin() || 
+        (isOwner(userId) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastSeenAt', 'isOnline', 'lastLoginAt']))
+      );
+      allow delete: if isAdmin();
+    }
+
+    // 3. Collection admins (Vérification serveur du patron)
+    match /admins/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() || (isSignedIn() && !exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
+    }
+
+    // 4. Test de connectivité (Health check)
+    match /_health_check/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // 5. Catalogue des Boissons & Prix fixes par conditionnement (products)
+    // - Lecture : autorisée à tout le personnel authentifié
+    // - Création & Mise à jour : autorisées à tout collaborateur authentifié avec validation de données
+    // - Suppression : réservée à l'administrateur
+    match /products/{productId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidProduct(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    // 6. Caisse & Ventes au comptant (sales)
+    // - Lecture : tout le personnel authentifié
+    // - Création : tout collaborateur authentifié
+    // - Mise à jour et suppression : réservées à l'administrateur (audit log obligatoire)
+    match /sales/{saleId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    // 7. Mouvements de stock (stock_movements)
+    // - Lecture : tout le personnel authentifié
+    // - Création : tout collaborateur authentifié (vente, arrivage, casse, inventaire)
+    // - Mise à jour et suppression : réservées à l'administrateur
+    match /stock_movements/{movId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    // 8. Approvisionnements & Achats (purchases)
+    // - Lecture & Création : tout collaborateur authentifié (réception fournisseur)
+    // - Modification & Suppression : réservées à l'administrateur
+    match /purchases/{purchaseId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    // 9. Dépenses commerciales (expenses)
+    match /expenses/{expenseId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    // 10. Mouvements de caisse (cash_movements)
+    match /cash_movements/{movId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    // 11. Journal d'audit (audit_logs)
+    // - Lecture : réservée au patron
+    // - Création : tout collaborateur authentifié lors d'une action
+    // - Registre immuable : aucune modification ni suppression
+    match /audit_logs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+  }
+}

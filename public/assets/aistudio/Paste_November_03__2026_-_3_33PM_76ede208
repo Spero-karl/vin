@@ -1,0 +1,906 @@
+# GESTION BOISSONS — CAHIER DES CHARGES MAÎTRE
+## INSTRUCTION GLOBALE DE DÉVELOPPEMENT ET DE FINALISATION
+
+Tu agis comme un architecte logiciel senior, un expert en développement full-stack, un spécialiste Firebase, un expert en comptabilité commerciale et un designer UX/UI professionnel.
+
+Tu dois poursuivre le développement de mon application EXISTANTE appelée GESTION BOISSONS.
+
+Cette instruction constitue le cahier des charges officiel et définitif du projet. Elle remplace les anciennes instructions contradictoires et regroupe toutes les fonctionnalités souhaitées.
+
+IMPORTANT : Google AI Studio peut bientôt atteindre sa limite de conversation. Tu dois donc analyser le projet actuel et utiliser ce document comme référence autonome, sans dépendre des anciennes conversations.
+
+Ne recommence jamais le projet depuis zéro. Modifie les fichiers existants, conserve les fonctionnalités opérationnelles et complète les parties manquantes.
+
+Ne te contente pas de produire un plan : réalise les modifications directement dans le code.
+
+# 1. IDENTITÉ DU COMMERCE
+
+Nom de l'application : GESTION BOISSONS.
+
+Nom commercial affiché : La Boutique.
+
+Activité : commerce de boissons, vins, bières, champagnes, spiritueux, whiskies, rhums, liqueurs, jus, sodas et eaux.
+
+Monnaie : FCFA.
+
+Pays d'exploitation : Bénin.
+
+Types de ventes : détail et gros.
+
+Gestion des stocks : détaillée.
+
+Conditionnements : bouteille, carton, pack, casier et autres conditionnements configurables.
+
+Nombre maximal d'utilisateurs autorisés : 6, ADMIN compris.
+
+Il s'agit d'une seule boutique avec une base de données commune.
+
+# 2. TECHNOLOGIES ET INFRASTRUCTURE
+
+Conserver impérativement le projet Firebase existant.
+
+Firebase Project ID : cave-17421.
+
+Architecture existante :
+- React.
+- TypeScript.
+- Vite.
+- Firebase Authentication.
+- Cloud Firestore.
+- Firebase Realtime Database.
+- IndexedDB pour la persistance locale.
+- PWA pour la compatibilité mobile et ordinateur.
+
+Conserver toutes les variables d'environnement existantes.
+
+Ne créer aucun nouveau projet Firebase.
+
+Ne créer aucune nouvelle base Firestore.
+
+Ne pas passer au forfait Blaze.
+
+Ne pas demander de carte bancaire.
+
+Ne pas intégrer de service payant obligatoire.
+
+L'application doit rester exploitable avec les offres gratuites et leurs limites réelles.
+
+# 3. SYSTÈME DE COMPTES : ADMIN ET UTILISATEURS INVITÉS
+
+CETTE SECTION REMPLACE DÉFINITIVEMENT TOUT ANCIEN SYSTÈME DE RÔLES.
+
+Je ne veux plus voir les termes :
+- Patron.
+- Vendeur.
+- Magasinier.
+- Collaborateur associé à une fonction commerciale.
+- Responsable de magasin.
+
+Le seul compte principal doit s'appeler :
+
+ADMIN
+
+L'ADMIN est le propriétaire de l'application. Il possède les droits de gestion des invitations, des utilisateurs, des paramètres administratifs et des informations financières.
+
+Les autres personnes sont simplement des UTILISATEURS.
+
+Elles ne sont pas des vendeurs ou des magasiniers. Elles disposent des mêmes capacités opérationnelles.
+
+Il existe uniquement deux niveaux d'autorisation : ADMIN et UTILISATEUR.
+
+## 3.1. Création du compte ADMIN
+
+Conserver le compte principal existant s'il est déjà correctement configuré.
+
+Ne pas créer un nouvel administrateur si un administrateur existe déjà.
+
+Ne pas supprimer, désactiver ou bloquer le compte principal pendant les modifications.
+
+Dans toute l'application, remplacer les anciennes appellations « Patron » et « Premier Patron / Admin » par « ADMIN » ou « Compte ADMIN ».
+
+## 3.2. Système de parrainage obligatoire
+
+Je veux que seul l'ADMIN puisse autoriser une nouvelle personne à utiliser l'application.
+
+Créer dans l'espace ADMIN une fonctionnalité appelée :
+
+GESTION DES INVITATIONS
+
+L'ADMIN doit pouvoir générer un code de parrainage personnel à transmettre à une personne.
+
+Chaque code doit être :
+- Généré aléatoirement.
+- Suffisamment long et difficile à deviner.
+- Unique.
+- Utilisable une seule fois.
+- Associé à l'invitation de l'ADMIN.
+- Révocable par l'ADMIN.
+- Éventuellement limité dans le temps.
+- Associé à une date de création.
+- Associé à un état : disponible, utilisé, expiré ou révoqué.
+
+Le code doit être généré uniquement à la demande de l'ADMIN.
+
+Aucun utilisateur ordinaire ne doit pouvoir générer ou envoyer des codes.
+
+L'ADMIN doit pouvoir consulter les invitations en attente et les invitations déjà utilisées.
+
+Prévoir une action permettant de copier facilement un code pour l'envoyer à la personne concernée par WhatsApp ou un autre moyen.
+
+L'application n'a pas besoin d'envoyer automatiquement des SMS ou des e-mails payants.
+
+## 3.3. Inscription après invitation
+
+Créer un écran d'inscription spécifique.
+
+Le parcours doit être le suivant :
+
+ÉTAPE 1 : la personne reçoit un code de parrainage de l'ADMIN.
+
+ÉTAPE 2 : elle ouvre l'application et saisit le code.
+
+ÉTAPE 3 : le système vérifie que le code existe, qu'il est valide, qu'il n'est pas expiré, qu'il n'a pas été utilisé et qu'il n'a pas été révoqué.
+
+ÉTAPE 4 : si le code est valide, la personne peut poursuivre son inscription.
+
+ÉTAPE 5 : elle renseigne obligatoirement :
+- Son adresse e-mail.
+- Son mot de passe.
+- La confirmation de son mot de passe.
+
+ÉTAPE 6 : créer son compte dans Firebase Authentication avec son adresse e-mail et son mot de passe.
+
+ÉTAPE 7 : associer le compte à l'invitation et enregistrer son statut d'utilisateur autorisé.
+
+ÉTAPE 8 : marquer définitivement le code comme utilisé.
+
+Le code de parrainage ne remplace jamais l'authentification par e-mail.
+
+Après son inscription, l'utilisateur devra toujours se connecter avec son adresse e-mail et son mot de passe.
+
+Ne jamais permettre une inscription libre sans code valide.
+
+Un code déjà utilisé ne doit jamais fonctionner une deuxième fois.
+
+## 3.4. Gestion des invitations et sécurité
+
+Cette fonctionnalité doit être réellement implémentée avec Firebase, pas simulée.
+
+Utiliser des opérations atomiques pour éviter qu'un même code soit utilisé simultanément sur plusieurs appareils.
+
+L'ADMIN doit être le seul à pouvoir créer, révoquer et consulter les invitations administratives.
+
+Les utilisateurs ordinaires ne doivent pas pouvoir s'attribuer eux-mêmes les droits ADMIN.
+
+Ne pas faire confiance à un simple contrôle JavaScript pour attribuer les autorisations.
+
+Protéger les invitations par des règles Firebase strictes.
+
+Ne pas stocker les mots de passe dans Firestore.
+
+Ne jamais enregistrer un mot de passe en clair.
+
+Prévoir une stratégie de création sécurisée du premier compte ADMIN.
+
+Si une fonctionnalité nécessite un backend de confiance, ne pas prétendre qu'une validation côté navigateur suffit. Utiliser une solution réellement compatible avec le budget gratuit et expliquer ses éventuelles limitations.
+
+## 3.5. Limite de six comptes
+
+Le nombre maximal de comptes autorisés est de six, ADMIN compris.
+
+L'application doit empêcher la création d'un septième compte.
+
+Les invitations doivent tenir compte des places disponibles.
+
+Éviter de générer plus d'invitations actives que de places restantes.
+
+Gérer les créations simultanées pour empêcher le dépassement de la limite.
+
+Prévoir la désactivation d'un utilisateur par l'ADMIN.
+
+Ne pas supprimer l'historique de ses anciennes opérations lorsqu'un utilisateur est désactivé.
+
+# 4. SUPPRESSION DES COMPTES ET DONNÉES DE DÉMONSTRATION
+
+Supprimer les comptes fictifs, les comptes de démonstration et les utilisateurs de test qui auraient été intégrés dans le projet.
+
+Supprimer également les données de démonstration clairement identifiées :
+- Faux utilisateurs.
+- Faux produits.
+- Fausses ventes.
+- Fausses transactions.
+- Faux historiques.
+- Fausses présences.
+- Faux chiffres financiers.
+
+Je ne veux plus voir de personnes fictives affichées dans la liste des utilisateurs connectés.
+
+IMPORTANT :
+
+Avant toute suppression, analyser les données existantes.
+
+Ne jamais supprimer le véritable compte ADMIN.
+
+Ne jamais supprimer les vrais comptes ou les véritables opérations commerciales.
+
+Ne pas effectuer de suppression massive sans distinguer les données de démonstration des données réelles.
+
+Si des données ne peuvent pas être identifiées avec certitude comme fictives, les signaler à l'ADMIN avant de les supprimer.
+
+Après nettoyage, l'application doit afficher uniquement les véritables utilisateurs, produits et opérations.
+
+# 5. ACCUEIL : AUCUNE INFORMATION FINANCIÈRE
+
+L'accueil doit être un espace de travail opérationnel, simple et élégant.
+
+Ne jamais afficher :
+- Chiffre d'affaires.
+- Bénéfices.
+- Marges.
+- Dépenses.
+- Solde de caisse.
+- Solde Mobile Money.
+- Montants des ventes.
+- Statistiques financières.
+
+Ces informations sont réservées à la rubrique financière de l'ADMIN.
+
+Sur l'accueil, afficher simplement :
+
+« Bonjour ! »
+
+« Bienvenue dans votre espace de gestion. »
+
+Ne jamais afficher le nom complet ou une fonction professionnelle de l'utilisateur.
+
+Ne jamais afficher « Patron », « Vendeur » ou « Magasinier ».
+
+L'avatar peut conserver les initiales de l'utilisateur.
+
+# 6. DESIGN PREMIUM RETAIL
+
+Conserver l'identité visuelle actuelle.
+
+Palette :
+- Ivoire : #F4F1E9.
+- Vert forêt : #294637.
+- Terracotta : #B87555.
+- Blanc cassé.
+- Gris doux pour les textes secondaires.
+
+Créer une interface professionnelle, minimaliste, élégante et chaleureuse.
+
+Utiliser :
+- Des espacements généreux.
+- Des icônes fines.
+- Des boutons sobres.
+- Des formulaires simples.
+- Une navigation intuitive.
+- Des composants cohérents.
+- Une typographie lisible.
+
+Éviter les grandes cartes inutiles, les couleurs flashy, les dégradés excessifs, les ombres prononcées et les tableaux de bord surchargés.
+
+Conserver l'image de fond personnalisée qui sera fournie séparément, si elle est disponible dans les ressources du projet. L'intégrer discrètement, sans réduire la lisibilité.
+
+Ne pas utiliser la capture d'écran de la bannière d'installation comme image de fond.
+
+# 7. SUPPRESSION DE LA BANNIÈRE D'INSTALLATION ET DU MENU PWA
+
+Sur la capture que je fournis, il y a un encadré :
+
+« Utilisation sur mobile (Android & iPhone) »
+« Installez l'app sur votre écran d'accueil sans passer par un store payant. »
+Avec un bouton « Installer ».
+
+Je ne veux plus voir cet encadré.
+
+Supprimer complètement cette bannière de l'interface.
+
+Ne pas la déplacer ailleurs.
+
+Ne pas la remplacer par un autre encadré publicitaire.
+
+Supprimer également les entrées visibles suivantes :
+- Configuration.
+- PWA.
+- Matrice des rôles de sécurité.
+
+Ces rubriques ne doivent plus apparaître dans le menu.
+
+IMPORTANT : leur suppression visuelle ne signifie pas qu'il faut supprimer les mécanismes techniques de sécurité, les manifestes, le service worker ou les capacités nécessaires à l'application.
+
+Conserver la compatibilité technique PWA et l'installation sur mobile, mais sans promouvoir cette installation par la bannière supprimée.
+
+# 8. NAVIGATION PRINCIPALE
+
+Conserver une navigation simple avec les rubriques réellement utiles :
+
+- Accueil.
+- Produits.
+- Ventes.
+- Achats.
+- Stocks.
+- Historique.
+- Caisse.
+- Finances, accessible uniquement à l'ADMIN.
+- Menu.
+
+Sur mobile, utiliser une navigation inférieure élégante et adaptée.
+
+Sur ordinateur, utiliser une navigation latérale discrète.
+
+Ne pas ajouter de rubriques administratives inutiles.
+
+La gestion des invitations et des comptes doit être accessible uniquement à l'ADMIN.
+
+# 9. PRÉSENCE EN TEMPS RÉEL : STYLE MESSENGER
+
+Conserver le système discret de présence.
+
+En haut à droite, près de l'avatar, afficher un point vert et le nombre de personnes connectées.
+
+Exemple :
+
+● 3 [avatar]
+
+Au toucher, ouvrir une petite fenêtre flottante indiquant les utilisateurs réellement connectés.
+
+Afficher :
+- Initiales ou avatar.
+- Nom de l'utilisateur.
+- Indicateur vert.
+- État connecté.
+
+Ne pas afficher une grande carte Présence sur l'accueil.
+
+Utiliser Firebase Realtime Database et onDisconnect pour gérer les présences.
+
+Gérer correctement plusieurs appareils connectés avec un même compte, sans compter deux fois la même personne.
+
+Aucun utilisateur fictif.
+
+# 10. MODULE PRODUITS
+
+Créer un catalogue complet de boissons.
+
+Chaque produit doit contenir :
+- Nom.
+- Marque.
+- Catégorie.
+- Description facultative.
+- Image facultative.
+- Code-barres facultatif.
+- Volume ou format.
+- Unité de stock de base.
+- Conditionnements.
+- Nombre d'unités par conditionnement.
+- Prix d'achat.
+- Prix de vente.
+- Seuil d'alerte.
+- État du produit.
+
+Prévoir les catégories de boissons adaptées au commerce.
+
+Le formulaire de création doit réellement enregistrer les produits dans Firestore.
+
+Après enregistrement confirmé :
+- Afficher un message de réussite.
+- Actualiser le catalogue.
+- Afficher immédiatement le produit.
+
+En cas d'échec, afficher une erreur compréhensible et conserver les données saisies.
+
+# 11. CONDITIONNEMENTS
+
+Un produit peut être vendu à la bouteille, au carton, au pack ou au casier.
+
+Les conversions doivent être configurables individuellement.
+
+Exemple :
+
+1 carton = 24 bouteilles.
+
+Une vente de 2 cartons et 3 bouteilles représente 51 bouteilles.
+
+Le stock doit être géré dans une unité de référence cohérente.
+
+Ne jamais supposer que tous les cartons contiennent le même nombre d'unités.
+
+# 12. ACHATS ET APPROVISIONNEMENTS
+
+Enregistrer chaque approvisionnement avec :
+- Fournisseur.
+- Date.
+- Produits.
+- Quantités.
+- Conditionnements.
+- Prix d'achat réel.
+- Frais éventuels.
+- Montant total.
+- Référence de facture facultative.
+
+Chaque réception validée augmente le stock.
+
+Conserver l'historique complet des achats et des prix d'achat.
+
+# 13. STOCKS
+
+Gérer :
+- Entrées.
+- Sorties.
+- Ventes.
+- Inventaires physiques.
+- Ajustements.
+- Pertes.
+- Casses.
+- Retours.
+- Alertes de stock faible.
+- Historique des mouvements.
+
+Aucune gestion de consigne.
+
+Utiliser des opérations atomiques et éviter les stocks négatifs.
+
+# 14. PROCESSUS DE VENTE
+
+Créer un processus de vente rapide et fiable.
+
+L'utilisateur doit pouvoir :
+- Rechercher une boisson.
+- Sélectionner un produit.
+- Choisir un conditionnement.
+- Saisir la quantité.
+- Voir le prix unitaire.
+- Voir le total par ligne.
+- Ajouter plusieurs produits.
+- Consulter le récapitulatif.
+- Choisir obligatoirement le moyen de paiement.
+- Confirmer la vente.
+
+Les seuls moyens de paiement autorisés sont :
+
+ESPÈCES et MOBILE MONEY (MoMo).
+
+Supprimer tous les autres moyens de paiement.
+
+Le choix du paiement doit être clairement visible pendant la vente.
+
+Aucune vente à crédit.
+
+Aucune TVA pour le moment.
+
+Après validation, enregistrer automatiquement :
+- La vente.
+- Les lignes de produits.
+- Les quantités.
+- Les prix appliqués.
+- Le moyen de paiement.
+- La référence.
+- Le coût des marchandises vendues.
+- La marge brute.
+- Le mouvement de stock.
+- Le mouvement d'encaissement.
+- Les écritures comptables.
+
+Une vente ne doit pas être comptabilisée deux fois.
+
+# 15. CORRECTION OBLIGATOIRE DE L'ERREUR FIRESTORE DES VENTES
+
+Une erreur est apparue :
+
+Function Transaction.set() called with invalid data. Unsupported field value: undefined (found in field notes in document sales/...).
+
+Il faut corriger la cause réelle.
+
+Analyser tous les objets envoyés à transaction.set().
+
+Identifier les champs facultatifs pouvant contenir undefined.
+
+Ne jamais envoyer de valeurs undefined à Firestore.
+
+Omettre les champs facultatifs non renseignés ou utiliser null lorsque le modèle le prévoit.
+
+Conserver les notes lorsqu'elles existent.
+
+Vérifier également les objets imbriqués et les tableaux.
+
+Conserver les transactions atomiques entre les ventes et les stocks.
+
+Ne jamais diminuer le stock si la vente n'a pas été enregistrée.
+
+Ne pas masquer l'erreur.
+
+Effectuer un véritable test de création d'une vente.
+
+# 16. HISTORIQUE DES VENTES
+
+Chaque vente doit recevoir une référence unique.
+
+Exemple :
+
+VENTE-20261103-0001.
+
+Conserver :
+- Référence.
+- Date.
+- Heure.
+- Utilisateur.
+- Produits achetés.
+- Quantités.
+- Conditionnements.
+- Prix unitaires.
+- Totaux par ligne.
+- Total général.
+- Moyen de paiement.
+- Coût des marchandises vendues.
+- Marge brute.
+- État de la vente.
+
+Lorsqu'on ouvre une vente, afficher un historique détaillé et un ticket clair.
+
+Prévoir des recherches par référence, produit, date et période.
+
+Ne jamais supprimer silencieusement une vente validée.
+
+Toute annulation doit produire des mouvements correctifs traçables.
+
+# 17. COMPTABILITÉ AUTOMATIQUE
+
+C'est une priorité absolue.
+
+Chaque vente validée doit déclencher automatiquement les écritures comptables nécessaires.
+
+Créer un véritable journal des opérations.
+
+Chaque vente doit automatiquement :
+1. Augmenter le chiffre d'affaires.
+2. Calculer le coût des marchandises vendues.
+3. Calculer la marge brute.
+4. Augmenter le compte d'encaissement correspondant.
+5. Déduire le stock.
+6. Créer une écriture comptable.
+7. Actualiser les résultats financiers.
+8. Être visible dans l'historique.
+
+Utiliser le coût moyen pondéré pour calculer le coût de revient.
+
+Formules :
+
+Chiffre d'affaires = total des ventes validées.
+
+Coût des marchandises vendues = coût moyen pondéré multiplié par les quantités vendues.
+
+Marge brute = chiffre d'affaires - coût des marchandises vendues.
+
+Résultat net estimé = marge brute - dépenses enregistrées.
+
+Ne jamais confondre chiffre d'affaires, encaissement, marge brute et bénéfice.
+
+Les remboursements et annulations doivent générer les écritures inverses nécessaires.
+
+Ne pas calculer de TVA.
+
+# 18. COMPTABILITÉ JOURNALIÈRE ET MENSUELLE
+
+Créer un module Finances réservé à l'ADMIN.
+
+Rapport journalier :
+- Chiffre d'affaires.
+- Nombre de ventes.
+- Coût des marchandises vendues.
+- Marge brute.
+- Dépenses.
+- Résultat net estimé.
+- Encaissements en espèces.
+- Encaissements MoMo.
+- Solde espèces.
+- Solde MoMo.
+
+Rapport mensuel :
+- Chiffre d'affaires.
+- Nombre de ventes.
+- Coût des marchandises vendues.
+- Marge brute.
+- Dépenses.
+- Résultat net estimé.
+- Répartition des paiements.
+- Évolution mensuelle.
+- Produits les plus vendus.
+- Produits les plus rentables.
+
+Prévoir les périodes personnalisées.
+
+Tous les montants doivent être en FCFA.
+
+Aucune TVA.
+
+# 19. COMPTES D'ENCAISSEMENT
+
+Créer deux comptes distincts :
+
+COMPTE ESPÈCES.
+
+COMPTE MOBILE MONEY.
+
+Une vente en espèces augmente la caisse.
+
+Une vente MoMo augmente le compte Mobile Money.
+
+Exemple :
+
+Vente de 25 000 FCFA en espèces : caisse +25 000 FCFA.
+
+Vente de 40 000 FCFA par MoMo : compte MoMo +40 000 FCFA.
+
+Prévoir :
+- Entrées.
+- Dépenses.
+- Retraits.
+- Dépôts.
+- Transferts internes.
+
+Un transfert entre comptes ne constitue ni un revenu ni une dépense.
+
+Les soldes doivent provenir de mouvements réels et traçables.
+
+L'application ne réalise pas directement les paiements Mobile Money. Elle enregistre les paiements reçus.
+
+# 20. DÉPENSES
+
+Enregistrer :
+- Transport.
+- Loyer.
+- Électricité.
+- Réparations.
+- Salaires.
+- Achats divers.
+- Autres charges.
+
+Chaque dépense doit avoir :
+- Référence.
+- Catégorie.
+- Description.
+- Montant.
+- Date.
+- Compte utilisé.
+- Utilisateur responsable.
+
+Une dépense diminue le compte correspondant et entre dans le calcul du résultat net estimé.
+
+# 21. MODE HORS CONNEXION : BASE LOCALE
+
+Je veux une véritable base de données locale.
+
+Utiliser IndexedDB pour conserver les données sur chaque appareil.
+
+Utiliser également la persistance Firestore lorsque disponible et compatible.
+
+L'application doit pouvoir consulter hors connexion les produits déjà synchronisés et leur dernier stock connu.
+
+Permettre d'enregistrer localement :
+- Ventes.
+- Achats.
+- Produits.
+- Mouvements de stock.
+- Dépenses.
+
+Chaque opération locale doit recevoir :
+- UUID unique.
+- Horodatage.
+- Identifiant utilisateur.
+- État de synchronisation.
+
+États :
+- En attente.
+- Synchronisation en cours.
+- Synchronisé.
+- Échec.
+
+Lors du retour d'Internet, lancer automatiquement la synchronisation.
+
+Ne jamais supprimer une opération locale avant confirmation de son enregistrement dans Firebase.
+
+Éviter les doublons grâce aux UUID et à une logique idempotente.
+
+Les ventes effectuées hors connexion doivent être clairement indiquées comme EN ATTENTE DE SYNCHRONISATION.
+
+Ne jamais les présenter comme des ventes définitivement validées dans les comptes centraux avant confirmation du serveur.
+
+Lors de la synchronisation, vérifier les stocks et les conflits.
+
+Si deux appareils ont vendu simultanément les dernières unités disponibles, ne pas écraser les données : signaler le conflit et conserver les opérations en attente de résolution.
+
+Prévoir une interface permettant de consulter les opérations en attente.
+
+# 22. SYNCHRONISATION MULTI-APPAREILS
+
+Tous les appareils autorisés partagent les mêmes données.
+
+Une vente enregistrée en ligne doit apparaître sur les autres appareils.
+
+Les modifications de produits, achats, stocks, dépenses et écritures doivent se synchroniser en temps réel.
+
+Utiliser Firestore pour les données commerciales et Realtime Database pour la présence.
+
+Gérer correctement les reconnexions.
+
+# 23. SÉCURITÉ
+
+Conserver Firebase Authentication.
+
+Seul l'ADMIN peut :
+- Gérer les invitations.
+- Créer ou désactiver les utilisateurs.
+- Consulter les finances.
+- Consulter les bénéfices et les marges.
+- Gérer les autorisations administratives.
+
+Les utilisateurs invités peuvent effectuer les opérations commerciales.
+
+Les règles Firebase doivent réellement protéger les données financières et les invitations.
+
+Ne jamais rendre les bases publiques.
+
+Ne jamais attribuer les droits ADMIN depuis une simple variable locale.
+
+Ne pas exposer de secrets privés.
+
+Ne pas supprimer les mécanismes techniques de sécurité en supprimant l'ancienne matrice des rôles de l'interface.
+
+# 24. IMAGE DE FOND PERSONNALISÉE
+
+Conserver la demande précédente d'intégration d'une image personnelle en arrière-plan si le fichier correspondant est disponible dans les ressources du projet.
+
+L'intégrer avec élégance, en respectant l'identité visuelle.
+
+Prévoir une superposition ivoire légère si nécessaire.
+
+Ne pas déformer l'image.
+
+Ne pas réduire la lisibilité des textes et des boutons.
+
+La capture de la bannière d'installation fournie dans cette demande est uniquement une référence pour identifier l'élément à supprimer. Ne pas l'utiliser comme image de fond.
+
+# 25. TESTS OBLIGATOIRES
+
+Tester réellement les fonctionnalités.
+
+AUTHENTIFICATION :
+- Connexion ADMIN.
+- Génération d'un code.
+- Validation d'un code.
+- Inscription par e-mail et mot de passe.
+- Refus d'un code déjà utilisé.
+- Refus d'un code expiré.
+- Refus d'une inscription sans code.
+- Respect de la limite de six comptes.
+
+VENTES :
+- Création d'une vente.
+- Sélection espèces.
+- Sélection MoMo.
+- Enregistrement Firestore.
+- Déduction du stock.
+- Création du mouvement de caisse.
+- Création du journal comptable.
+- Calcul de la marge.
+
+COMPTABILITÉ :
+- Rapport journalier.
+- Rapport mensuel.
+- Calcul du bénéfice.
+- Prise en compte des dépenses.
+- Distinction des deux comptes.
+
+HISTORIQUE :
+- Référence unique.
+- Détail du ticket.
+- Moyen de paiement.
+- Produits et quantités.
+- Traçabilité des corrections.
+
+MODE HORS CONNEXION :
+- Enregistrement local.
+- Conservation après fermeture et réouverture.
+- Retour d'Internet.
+- Synchronisation.
+- Absence de doublons.
+
+MULTI-APPAREILS :
+- Connexion simultanée.
+- Présence réelle.
+- Synchronisation des ventes.
+- Synchronisation des stocks.
+
+INTERFACE :
+- Aucun nom personnel sur l'accueil.
+- Aucun rôle vendeur ou magasinier.
+- Aucun terme Patron.
+- Aucun compte fictif.
+- Aucune bannière d'installation.
+- Aucune rubrique PWA.
+- Aucune rubrique Configuration.
+- Aucune matrice des rôles visible.
+
+Ne jamais annoncer qu'un test est réussi sans l'avoir réellement effectué.
+
+# 26. ORDRE DE DÉVELOPPEMENT
+
+Compte tenu des limites de contexte de Google AI Studio, travaille méthodiquement.
+
+Commence par analyser l'ensemble du projet, les fichiers, la configuration Firebase, les modèles de données, les règles de sécurité et les fonctionnalités existantes.
+
+Ensuite, implémente dans cet ordre :
+
+PRIORITÉ 1 : nettoyer l'interface, supprimer la bannière d'installation et les comptes de démonstration identifiables, remplacer les appellations Patron par ADMIN et supprimer les rôles obsolètes.
+
+PRIORITÉ 2 : mettre en place le système d'invitations par code, l'inscription obligatoire par e-mail et mot de passe et la limite de six utilisateurs.
+
+PRIORITÉ 3 : corriger définitivement l'enregistrement des produits et l'erreur Firestore liée aux valeurs undefined dans les ventes.
+
+PRIORITÉ 4 : fiabiliser les ventes, les stocks et les transactions atomiques.
+
+PRIORITÉ 5 : mettre en place les comptes espèces et MoMo.
+
+PRIORITÉ 6 : créer la comptabilité automatique et le journal des opérations.
+
+PRIORITÉ 7 : développer les rapports journaliers, mensuels et les bénéfices.
+
+PRIORITÉ 8 : développer la base locale hors connexion et la synchronisation automatique.
+
+PRIORITÉ 9 : vérifier la présence en temps réel, les règles de sécurité et l'ensemble de l'interface.
+
+# 27. CONSIGNES FINALES NON NÉGOCIABLES
+
+Tu travailles sur le projet existant.
+
+Ne crée pas un nouveau projet.
+
+Ne change pas le Firebase Project ID cave-17421.
+
+Ne supprime pas les données commerciales réelles.
+
+Ne supprime pas le véritable compte ADMIN.
+
+Ne désactive pas les règles de sécurité.
+
+Ne crée pas de données fictives pour faire croire qu'une fonctionnalité marche.
+
+Ne remplace pas une fonctionnalité réelle par une simulation.
+
+Ne supprime pas une fonctionnalité qui marche sans raison technique valable.
+
+Ne déclare pas une tâche terminée si elle ne l'est pas.
+
+Si une modification nécessite une intervention manuelle dans Firebase, explique précisément où aller et quoi faire.
+
+Si une fonctionnalité est impossible à réaliser avec les contraintes gratuites actuelles, explique la limitation et propose une architecture gratuite réaliste.
+
+À la fin, indique :
+- Les fichiers modifiés.
+- Les fonctionnalités effectivement développées.
+- Les erreurs corrigées.
+- Les règles Firebase concernées.
+- Les tests réellement exécutés.
+- Les éventuelles interventions manuelles restantes.
+
+# OBJECTIF FINAL
+
+GESTION BOISSONS doit devenir un logiciel professionnel et fiable de gestion commerciale.
+
+L'ADMIN contrôle les invitations, les utilisateurs et les finances.
+
+Les utilisateurs autorisés travaillent sur les produits, les achats, les ventes et les stocks.
+
+Chaque vente est enregistrée, référencée, historisée et comptabilisée automatiquement.
+
+La caisse et le compte Mobile Money évoluent correctement.
+
+Les bénéfices sont calculés quotidiennement et mensuellement.
+
+L'application continue à fonctionner hors connexion et synchronise les opérations dès que l'accès Internet revient.
+
+Toutes les données sont protégées et partagées entre les appareils autorisés.
+
+COMMENCE PAR ANALYSER LE PROJET EXISTANT, PUIS EXÉCUTE LES MODIFICATIONS DIRECTEMENT EN RESPECTANT STRICTEMENT CE CAHIER DES CHARGES.

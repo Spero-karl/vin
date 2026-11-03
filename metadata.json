@@ -1,0 +1,6 @@
+{
+  "name": "Gestion Boissons",
+  "description": "Application professionnelle de gestion commerciale de boutique de boissons, vins, bières et jus en temps réel (PWA & multi-utilisateurs).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

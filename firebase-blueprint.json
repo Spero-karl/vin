@@ -1,0 +1,95 @@
+{
+  "entities": {
+    "User": {
+      "title": "Utilisateur",
+      "description": "Profil d'un collaborateur de la boutique (max 6 comptes actifs)",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "role": { "type": "string", "enum": ["admin", "stock_keeper", "seller"] },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "lastLoginAt": { "type": "string" },
+        "phone": { "type": "string", "maxLength": 30 }
+      },
+      "required": ["uid", "email", "displayName", "role", "isActive", "createdAt"]
+    },
+    "Admin": {
+      "title": "Administrateur",
+      "description": "Document de repère sécurisé pour l'identification de l'administrateur dans les règles de sécurité",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Product": {
+      "title": "Boisson / Produit",
+      "description": "Article de boisson (bière, vin, spiritueux, jus, eau) avec unité de base et conditionnements",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 150 },
+        "category": { "type": "string", "maxLength": 50 },
+        "baseUnit": { "type": "string", "maxLength": 20 },
+        "stockQuantity": { "type": "number" },
+        "retailPrice": { "type": "number" },
+        "casePrice": { "type": "number" },
+        "unitsPerCase": { "type": "number" }
+      },
+      "required": ["id", "name", "category", "baseUnit", "stockQuantity", "retailPrice"]
+    },
+    "Sale": {
+      "title": "Vente",
+      "description": "Transaction de vente au comptant intégral en FCFA",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "sellerId": { "type": "string", "maxLength": 128 },
+        "totalAmount": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["cash", "wave", "orange_money", "mtn_momo"] },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "sellerId", "totalAmount", "paymentMethod", "timestamp"]
+    },
+    "AuditLog": {
+      "title": "Journal d'audit",
+      "description": "Journal immuable consignant toute annulation ou correction exceptionnelle",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "action": { "type": "string", "maxLength": 100 },
+        "performedBy": { "type": "string", "maxLength": 128 },
+        "timestamp": { "type": "string" },
+        "details": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["id", "action", "performedBy", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Comptes et profils des 6 collaborateurs de la boutique"
+    },
+    "/admins/{userId}": {
+      "schema": "Admin",
+      "description": "Identifiants des administrateurs validés par les règles de sécurité"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Catalogue des boissons et tarifs par conditionnement"
+    },
+    "/sales/{saleId}": {
+      "schema": "Sale",
+      "description": "Historique des ventes atomiques au comptant"
+    },
+    "/audit_logs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Historique des corrections et événements de sécurité"
+    }
+  }
+}

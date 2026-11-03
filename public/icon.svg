@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="wine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#881337" />
+    </linearGradient>
+  </defs>
+  <!-- Background with subtle border -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <rect x="12" y="12" width="488" height="488" rx="100" fill="none" stroke="#334155" stroke-width="6"/>
+
+  <!-- Glowing crest circle -->
+  <circle cx="256" cy="256" r="180" fill="#0f172a" stroke="#d97706" stroke-width="4" stroke-opacity="0.4"/>
+
+  <!-- Bottle silhouettes & glass -->
+  <g transform="translate(256, 256)">
+    <!-- Wine Bottle (Left/Center) -->
+    <path d="M-60,70 L-60,-20 C-60,-50 -42,-70 -42,-110 L-42,-140 L-22,-140 L-22,-110 C-22,-70 -4,-50 -4,-20 L-4,70 Z" fill="url(#wine)" opacity="0.9" rx="8" />
+    <!-- Foil top -->
+    <rect x="-42" y="-148" width="20" height="12" rx="3" fill="#fcd34d" />
+    <!-- Label -->
+    <rect x="-56" y="-10" width="48" height="44" rx="4" fill="#fef3c7" opacity="0.95" />
+    <line x1="-50" y1="2" x2="-14" y2="2" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
+    <line x1="-50" y1="12" x2="-22" y2="12" stroke="#78350f" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- Beer/Soda Bottle (Right) -->
+    <path d="M10,80 L10,-10 C10,-35 24,-50 24,-85 L24,-115 L44,-115 L44,-85 C44,-50 58,-35 58,-10 L58,80 Z" fill="url(#gold)" opacity="0.95" />
+    <!-- Crown cap -->
+    <rect x="22" y="-122" width="24" height="10" rx="3" fill="#cbd5e1" />
+    <!-- Label -->
+    <rect x="14" y="0" width="40" height="42" rx="4" fill="#ffffff" opacity="0.9" />
+    <circle cx="34" cy="20" r="10" fill="#f59e0b" />
+
+    <!-- Stem glass in front -->
+    <path d="M-20,95 L40,95" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" />
+    <line x1="10" y1="95" x2="10" y2="55" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" />
+    <path d="M-8,25 C-8,50 28,50 28,25 Z" fill="#38bdf8" fill-opacity="0.3" stroke="#38bdf8" stroke-width="4" />
+    <!-- Liquid in glass -->
+    <path d="M-4,33 C-4,46 24,46 24,33 Z" fill="url(#wine)" opacity="0.8" />
+  </g>
+
+  <!-- Commercial Badge: "GB" (Gestion Boissons) -->
+  <rect x="186" y="380" width="140" height="34" rx="17" fill="#f59e0b" />
+  <text x="256" y="403" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="2">BOISSONS</text>
+</svg>
